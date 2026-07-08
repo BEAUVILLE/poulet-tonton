@@ -201,6 +201,20 @@
       color: white;
     }
 
+    .share-btn {
+      background: white;
+      color: var(--deep);
+      border: 1px solid var(--border);
+    }
+
+    .share-feedback {
+      margin-top: 12px;
+      min-height: 22px;
+      color: var(--green);
+      font-weight: 850;
+      font-size: 0.95rem;
+    }
+
     .note {
       margin-top: 24px;
       padding: 16px 18px;
@@ -286,7 +300,9 @@
         <div class="actions">
           <a class="btn primary" href="https://wa.me/221778329612?text=Bonjour%2C%20je%20viens%20pour%20les%20poulets%20de%203%2C5%20kg%20%C3%A0%203%20500%20FCFA.%20Est-ce%20encore%20disponible%20%3F" target="_blank" rel="noopener">💬 Commander sur WhatsApp</a>
           <a class="btn secondary" href="tel:+221778329612">📞 Appeler directement</a>
+          <button class="btn share-btn" type="button" id="shareButton">📲 Partager la fiche</button>
         </div>
+        <div class="share-feedback" id="shareFeedback" aria-live="polite"></div>
 
         <div class="note">
           Message simple : “Bonjour, je viens pour les poulets de 3,5 kg à 3 500 FCFA. Est-ce encore disponible ?”
@@ -307,5 +323,44 @@
       <span>Fiche simple · contact direct · paiement direct au vendeur</span>
     </footer>
   </main>
+
+  <script>
+    const shareButton = document.getElementById('shareButton');
+    const shareFeedback = document.getElementById('shareFeedback');
+
+    const shareData = () => ({
+      title: 'Poulets de poulailler à vendre · 3,5 kg',
+      text: 'Poulets de poulailler disponibles : poids moyen 3,5 kg, prix 3 500 FCFA. Contact direct WhatsApp : +221 77 832 96 12.',
+      url: window.location.href
+    });
+
+    async function copyShareLink() {
+      const data = shareData();
+      const message = `${data.text}\n${data.url}`;
+
+      try {
+        await navigator.clipboard.writeText(message);
+        shareFeedback.textContent = 'Lien copié. Tu peux le coller sur WhatsApp, SMS ou statut.';
+      } catch (error) {
+        shareFeedback.textContent = data.url;
+      }
+    }
+
+    shareButton.addEventListener('click', async () => {
+      const data = shareData();
+
+      if (navigator.share) {
+        try {
+          await navigator.share(data);
+          shareFeedback.textContent = 'Fiche prête à circuler.';
+          return;
+        } catch (error) {
+          if (error.name === 'AbortError') return;
+        }
+      }
+
+      await copyShareLink();
+    });
+  </script>
 </body>
 </html>
