@@ -9,6 +9,7 @@
   <meta property="og:description" content="Poulets locaux disponibles à 3 500 FCFA l’unité. Clip DIGIY avec son. Contact direct WhatsApp." />
   <meta property="og:type" content="website" />
   <meta property="og:video" content="https://poulet-tonton.digiylyfe.com/poulets-2kg5-SON-1080x1920.mp4" />
+  <meta property="og:video:type" content="video/mp4" />
   <meta name="theme-color" content="#111827" />
   <style>
     :root {
@@ -74,6 +75,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
       padding: 30px;
       color: white;
       overflow: hidden;
@@ -108,7 +110,8 @@
       background: #000;
     }
 
-    .sound-note {
+    .sound-note,
+    .video-fallback {
       position: relative;
       z-index: 1;
       margin-top: 14px;
@@ -123,6 +126,19 @@
       font-size: 0.92rem;
       backdrop-filter: blur(8px);
       text-align: center;
+    }
+
+    .video-fallback a {
+      color: #fff1bd;
+      font-weight: 1000;
+      text-decoration: underline;
+    }
+
+    .video-error {
+      display: none;
+      color: #fff1bd;
+      margin-top: 8px;
+      font-weight: 950;
     }
 
     .badge {
@@ -265,7 +281,7 @@
       .page { border-radius: 24px; }
       .hero { grid-template-columns: 1fr; min-height: auto; }
       .content { padding: 34px 24px; }
-      .visual { min-height: 560px; order: -1; padding: 24px 18px; flex-direction: column; }
+      .visual { min-height: 560px; order: -1; padding: 24px 18px; }
       .price-card { grid-template-columns: 1fr; }
       .actions { display: grid; grid-template-columns: 1fr; }
       .btn { width: 100%; }
@@ -309,12 +325,18 @@
 
       <div class="visual" aria-label="Clip Poulet Tonton avec son DIGIY">
         <div class="clip-box">
-          <video controls playsinline preload="metadata">
-            <source src="./poulets-2kg5-SON-1080x1920.mp4" type="video/mp4">
+          <video id="digiyVideo" controls playsinline preload="metadata">
+            <source src="https://poulet-tonton.digiylyfe.com/poulets-2kg5-SON-1080x1920.mp4?v=20260708-2" type="video/mp4">
             Votre navigateur ne peut pas lire cette vidéo.
           </video>
         </div>
-        <div class="sound-note">▶️ Appuie sur lecture pour voir le clip et entendre le son THE MEGE.</div>
+        <div class="sound-note">
+          ▶️ Appuie sur lecture pour voir le clip et entendre le son THE MEGE.
+          <div class="video-error" id="videoError">Si la vidéo ne part pas, le fichier MP4 doit être remplacé dans GitHub par le vrai fichier complet.</div>
+        </div>
+        <div class="video-fallback">
+          Secours : <a href="https://poulet-tonton.digiylyfe.com/poulets-2kg5-SON-1080x1920.mp4?v=20260708-2" target="_blank" rel="noopener">ouvrir la vidéo directement</a>
+        </div>
       </div>
     </section>
 
@@ -327,6 +349,8 @@
   <script>
     const shareButton = document.getElementById('shareButton');
     const shareFeedback = document.getElementById('shareFeedback');
+    const digiyVideo = document.getElementById('digiyVideo');
+    const videoError = document.getElementById('videoError');
 
     const shareData = () => ({
       title: 'Poulets de poulailler à vendre · 2,5 kg',
@@ -361,6 +385,12 @@
 
       await copyShareLink();
     });
+
+    if (digiyVideo && videoError) {
+      digiyVideo.addEventListener('error', () => {
+        videoError.style.display = 'block';
+      });
+    }
   </script>
 </body>
 </html>
